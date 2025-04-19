@@ -89,7 +89,7 @@ def add_product():
     stock = int(input("Enter initial stock: "))
     unit = input("Enter unit (pcs, box, kg, etc.): ").strip()
     date = datetime.today().strftime("%Y-%m-%d")
-
+    status = "LOW" if stock < 5 else "OK"
     wb, ws = load_inventory()
 
     for row in ws.iter_rows(min_row=2, values_only=True):
@@ -97,7 +97,7 @@ def add_product():
             print("Product ID already exists.")
             return
 
-    ws.append([pid, name, stock,unit, date])
+    ws.append([pid, name, stock,unit, date, status])
     wb.save(file_name)
     print("Product added.")
 
@@ -118,6 +118,7 @@ def update_stock():
         if row[0].value == pid:
             row[2].value += change
             row[4].value=date
+            row[5].value = "LOW" if row[2].value<5 else "OK"
             new_stock=row[2].value
             action="Stock In" if change > 0 else "Stock Out"
             log_ws.append([date,pid,change,new_stock,action])

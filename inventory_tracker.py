@@ -48,6 +48,41 @@ def load_inventory():
     ws = wb.active
     return wb, ws
 
+def edit_product_info():
+    pid=input("Enter product ID to edit: ").strip()
+    wb,ws=load_inventory()
+    found=False
+
+    for row in ws.iter_rows(min_row=2):
+        if row[0].value==pid:
+            print(f"\nEditing product: {row[1].value}")
+            new_name=input(f"Enter new name (or press enter to keep '{row[1].value}'): ").strip()
+            new_unit=input(f"\nEnter new name (or press enter to keep '{row[3].value}'): ").strip()
+            new_stock_input=input(f"Enter new stock (or press enter to keep '{row[2].value}'): ").strip()
+
+            if new_name:
+                row[1].value= new_name
+            if new_unit:
+                row[3].value= new_unit
+            if new_stock_input:
+                try:
+                    new_stock = int(new_stock_input)
+                    row[2].value = new_stock
+                    row[5].value = "LOW" if new_stock < 5 else "OK"
+                except ValueError:
+                    print("Invalid stock input. Keeping previous value.")
+
+            row[4].value = datetime.today().strftime("%Y-%m-%d")
+            found = True
+            break
+    
+    if found:
+        wb.save(file_name)
+        print("✅ Product updated.")
+
+    else:
+        print("❌ Product ID not found.")
+
 def add_product():
     pid = input("Enter Product ID: ").strip()
     name = input("Enter Product Name: ").strip()
@@ -113,7 +148,8 @@ def menu():
         print("2. Update Stock")
         print("3. View Inventory")
         print("4. Export Inventory Report (PDF)")
-        print("5. Exit")
+        print("5. Edit Product Info")
+        print("6. Exit")
         choice = input("Choose an option: ")
 
         if choice == "1":
@@ -125,6 +161,8 @@ def menu():
         elif choice == "4":
             export_inventory_report_pdf()
         elif choice == "5":
+            edit_product_info()
+        elif choice == "6":
             break
         else:
             print("Invalid option.")

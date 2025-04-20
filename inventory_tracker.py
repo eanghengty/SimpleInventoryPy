@@ -131,6 +131,33 @@ def update_stock():
     else:
         print("Product not found.")
 
+def delete_product():
+    pid=input("Enter Product ID to delete: ").strip()
+    wb,ws=load_inventory()
+    found=False
+
+    for row in ws.iter_rows(min_row=2):
+        if row[0].value == pid:
+            confirm=input(f"Are you sure you want to delete '{row[1].value} - {row[2].value}'? (yes/no): ").strip()
+            if confirm == "yes":
+                ws.delete_rows(row[0].row,1)
+                print(f"✅ Product '{pid}' deleted.")
+                found=True
+
+                #log deletion
+                log_ws=wb['Logs'] if "Logs" in wb.sheetnames else wb.create_sheet("Logs")
+                if log_ws.max_row==1:
+                    log_ws.append(["Date","Product ID","Changes","New Stock", "Action"])
+                log_ws.append([datetime.today().strftime("%Y-%m-%d"),pid,"-","-","Deleted"])
+                break
+            else:
+                print("❌ Deletion cancelled.")
+                return
+    if found:
+        wb.save(file_name)
+    else:
+        print("❌ Product not found.")
+
 def show_inventory():
     wb, ws = load_inventory()
     print("\nCurrent Inventory:")
@@ -150,7 +177,8 @@ def menu():
         print("3. View Inventory")
         print("4. Export Inventory Report (PDF)")
         print("5. Edit Product Info")
-        print("6. Exit")
+        print("6. Delete Product")
+        print("7. Exit")
         choice = input("Choose an option: ")
 
         if choice == "1":
@@ -164,6 +192,8 @@ def menu():
         elif choice == "5":
             edit_product_info()
         elif choice == "6":
+            delete_product()
+        elif choice == "7":
             break
         else:
             print("Invalid option.")

@@ -132,6 +132,16 @@ def update_stock():
         print("Product not found.")
 
 def delete_product():
+
+    # [new] show all current product before prompting
+    wb,ws=load_inventory()
+    print("\nAvailable Products: ")
+    print("{:<10} {:<20} {:<10} {:<6} {:<15} {:<10}".format("ID","Name","Stock","Unit","Last Updated","Status"))
+    for row in ws.iter_rows(min_row=2,values_only=True):
+        pid,name,stock,unit,date,status=row
+        print("{:<10} {:<20} {:<10} {:<6} {:<15} {:<10}".format(pid,name,stock,unit,date,status))
+
+
     pid=input("Enter Product ID to delete: ").strip()
     wb,ws=load_inventory()
     found=False

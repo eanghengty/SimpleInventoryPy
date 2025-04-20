@@ -154,7 +154,8 @@ def delete_product():
                 return #exit without deleting
             
             confirm=input(f"Are you sure you want to delete '{row[1].value} - {row[2].value}'? (yes/no): ").strip()
-            if confirm == "yes":
+            user_delete=input(f"Input your name (leave it blank will not delete): ").strip()
+            if confirm == "yes" and user_delete != "":
                 ws.delete_rows(row[0].row,1)
                 print(f"✅ Product '{pid}' deleted.")
                 found=True
@@ -163,7 +164,7 @@ def delete_product():
                 log_ws=wb['Logs'] if "Logs" in wb.sheetnames else wb.create_sheet("Logs")
                 if log_ws.max_row==1:
                     log_ws.append(["Date","Product ID","Changes","New Stock", "Action"])
-                log_ws.append([datetime.today().strftime("%Y-%m-%d"),pid,"-","-","Deleted"])
+                log_ws.append([datetime.today().strftime("%Y-%m-%d"),pid,"-","-","Deleted",user_delete])
                 break
             else:
                 print("❌ Deletion cancelled.")

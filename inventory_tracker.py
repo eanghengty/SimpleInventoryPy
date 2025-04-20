@@ -51,11 +51,11 @@ def login_user():
     print("2. Staff")
     while True:
         choice = input("Choose role (1 or 2): ").strip()
-        if choice == 1:
+        if choice == "1":
             user_role = "admin"
             print("✅ Logged as Admin")
             break
-        elif choice == 2:
+        elif choice == "2":
             user_role = "staff"
             print("✅ Logged as Staff")
             break

@@ -57,7 +57,7 @@ def edit_product_info():
         if row[0].value==pid:
             print(f"\nEditing product: {row[1].value}")
             new_name=input(f"Enter new name (or press enter to keep '{row[1].value}'): ").strip()
-            new_unit=input(f"\nEnter new name (or press enter to keep '{row[3].value}'): ").strip()
+            new_unit=input(f"\nEnter new unit (or press enter to keep '{row[3].value}'): ").strip()
             new_stock_input=input(f"Enter new stock (or press enter to keep '{row[2].value}'): ").strip()
 
             if new_name:

@@ -138,6 +138,11 @@ def delete_product():
 
     for row in ws.iter_rows(min_row=2):
         if row[0].value == pid:
+            current_stock=row[2].value
+            if current_stock>0:
+                print(f"❌ Cannot delete product '{pid}' — stock remaining: {current_stock}")
+                return #exit without deleting
+            
             confirm=input(f"Are you sure you want to delete '{row[1].value} - {row[2].value}'? (yes/no): ").strip()
             if confirm == "yes":
                 ws.delete_rows(row[0].row,1)

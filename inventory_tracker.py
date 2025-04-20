@@ -94,7 +94,7 @@ def add_product():
 
     for row in ws.iter_rows(min_row=2, values_only=True):
         if row[0] == pid:
-            print("Product ID already exists.")
+            print("✅ Product ID already exists.")
             return
 
     ws.append([pid, name, stock,unit, date, status])
@@ -127,9 +127,9 @@ def update_stock():
 
     if found:
         wb.save(file_name)
-        print("Stock updated.")
+        print("✅ Stock updated.")
     else:
-        print("Product not found.")
+        print("❌ Product not found.")
 
 def delete_product():
 

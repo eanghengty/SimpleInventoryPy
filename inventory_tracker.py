@@ -84,6 +84,9 @@ def edit_product_info():
         print("❌ Product ID not found.")
 
 def add_product():
+
+    # [new] show all current product before prompting
+
     pid = input("Enter Product ID: ").strip()
     name = input("Enter Product Name: ").strip()
     stock = int(input("Enter initial stock: "))
@@ -101,11 +104,31 @@ def add_product():
     wb.save(file_name)
     print("Product added.")
 
+def search_product():
+    #[new] prompt user to search by keyboard
+    keyword=input("Enter product ID or name to search: ").strip().lower()
+    wb,ws=load_inventory()
+    found=False
+    
+    print("\nSearch Result")
+    print("{:<10} {:<10} {:<10} {:<10} {:<10} {:<10}".format("ID","Name","Stock","Unit","Last Updated","Status"))
+
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        pid,name,stock,unit,date,status=row
+        if keyword in pid.lower() or keyword in name.lower():
+            found=True
+            print("{:<10} {:<10} {:<10} {:<10} {:<10} {:<10}".format(pid,name,stock,unit,date,status))
+    
+    if not found:
+        print("❌ No matching product found.")
+
 def update_stock():
+
+
     pid = input("Enter Product ID to update: ").strip()
     change = int(input("Enter stock change (positive for add, negative for remove): "))
     date = datetime.today().strftime("%Y-%m-%d")
-
+    remark= input("Enter the remark of buyer (phone number/name): ")
     wb, ws = load_inventory()
 
     log_ws = wb["Logs"] if "Logs" in wb.sheetnames else wb.create_sheet("Logs")
@@ -121,7 +144,7 @@ def update_stock():
             row[5].value = "LOW" if row[2].value<5 else "OK"
             new_stock=row[2].value
             action="Stock In" if change > 0 else "Stock Out"
-            log_ws.append([date,pid,change,new_stock,action])
+            log_ws.append([date,pid,change,new_stock,action,remark])
             found = True
             break
 
@@ -194,7 +217,8 @@ def menu():
         print("4. Export Inventory Report (PDF)")
         print("5. Edit Product Info")
         print("6. Delete Product")
-        print("7. Exit")
+        print("7. Search Product")
+        print("8. Exit")
         choice = input("Choose an option: ")
 
         if choice == "1":
@@ -210,6 +234,8 @@ def menu():
         elif choice == "6":
             delete_product()
         elif choice == "7":
+            search_product()
+        elif choice == "8":
             break
         else:
             print("Invalid option.")

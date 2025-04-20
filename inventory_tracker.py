@@ -9,7 +9,8 @@ from reportlab.platypus import Table, TableStyle, SimpleDocTemplate
 from reportlab.lib.units import inch
 
 file_name = "inventory.xlsx"
-
+#[NEW] store current user role globally
+user_role = None
 # Create file if it doesn't exist
 if not os.path.exists(file_name):
     wb = openpyxl.Workbook()
@@ -43,12 +44,37 @@ def export_inventory_report_pdf():
 
     print(f"\n✅ PDF report exported as: {filename}")
 
+def login_user():
+    global user_role
+    print("login role")
+    print("1. Admin")
+    print("2. Staff")
+    while True:
+        choice = input("Choose role (1 or 2): ").strip()
+        if choice == 1:
+            user_role = "admin"
+            print("✅ Logged as Admin")
+            break
+        elif choice == 2:
+            user_role = "staff"
+            print("✅ Logged as Staff")
+            break
+        else:
+            print("❌ Invalid choice. Try again.")
+
 def load_inventory():
     wb = load_workbook(file_name)
     ws = wb.active
     return wb, ws
 
 def edit_product_info():
+
+    #[new] Add Role Check to Restricted Functions
+    global user_role
+    if user_role != "admin":
+        print("❌ Access denied. Only Admin can perform this action.")
+        return
+    
     pid=input("Enter product ID to edit: ").strip()
     wb,ws=load_inventory()
     found=False
@@ -156,6 +182,12 @@ def update_stock():
 
 def delete_product():
 
+    #[new] Add Role Check to Restricted Functions
+    global user_role
+    if user_role != "admin":
+        print("❌ Access denied. Only Admin can perform this action.")
+        return
+
     # [new] show all current product before prompting
     wb,ws=load_inventory()
     print("\nAvailable Products: ")
@@ -241,4 +273,5 @@ def menu():
             print("Invalid option.")
 
 if __name__ == "__main__":
+    login_user()
     menu()
